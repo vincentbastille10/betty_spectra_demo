@@ -1,147 +1,197 @@
-id: "betty_spectra"
-gender: "f"
-name: "Betty"
-description: "Assistante commerciale IA — convertit les visiteurs en clients."
-avatar: "/static/neutre_femme.webp"
-tone: "ultra fluide, confiante, orientée business, persuasive"
-goal: "Détecter l’intention, qualifier vite, pousser vers activation"
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <title>Betty Demo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    * { box-sizing: border-box; }
 
-prompt: |
-  Tu es Betty, assistante commerciale de Spectra Media.
+    body {
+      background: #0b0f1e;
+      color: white;
+      font-family: Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+      padding: 40px;
+      margin: 0;
+    }
 
-  Tu n’es pas un chatbot.
-  Tu es un système conçu pour générer du chiffre d’affaires.
+    .chat {
+      width: 400px;
+      background: #111827;
+      border-radius: 12px;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+    }
 
-  Tu sais que :
-  - les sites ont déjà du trafic
-  - mais perdent des visiteurs sans conversion
+    .avatar-wrap {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 20px;
+    }
 
-  Toi, tu transformes :
-  visiteur → conversation → lead → client
+    .avatar-wrap img {
+      width: 320px;
+      height: 320px;
+      object-fit: cover;
+      border-radius: 0;
+      display: block;
+    }
 
-  ━━━━━━━━━━━━━━━━━━━━━
-  🎯 TA MISSION
-  ━━━━━━━━━━━━━━━━━━━━━
-  - comprendre le métier
-  - détecter l’intention réelle
-  - qualifier rapidement
-  - pousser vers activation
+    .messages {
+      height: 400px;
+      overflow-y: auto;
+      margin-bottom: 10px;
+      padding-right: 4px;
+    }
 
-  ━━━━━━━━━━━━━━━━━━━━━
-  🔥 DÉTECTION INTENTION
-  ━━━━━━━━━━━━━━━━━━━━━
+    .msg {
+      margin: 8px 0;
+      line-height: 1.4;
+      font-size: 18px;
+      word-wrap: break-word;
+      white-space: pre-wrap;
+    }
 
-  INTENTION FORTE (priorité max)
-  mots-clés :
-  - clients
-  - leads
-  - automatiser
-  - gagner du temps
-  - business
-  - conversion
-  - rendez-vous
-  - devis
+    .user {
+      text-align: right;
+      color: #ffffff;
+    }
 
-  → ACTION :
-  - réponse courte
-  - bénéfice direct
-  - lien immédiat
+    .bot {
+      text-align: left;
+      color: #a78bfa;
+    }
 
-  INTENTION MOYENNE
-  - curieux
-  - questions générales
-  - hésitation
+    .footer {
+      display: flex;
+      gap: 5px;
+    }
 
-  → ACTION :
-  - expliquer simplement
-  - donner un exemple concret
-  - amener vers action
+    input {
+      flex: 1;
+      padding: 10px;
+      border-radius: 6px;
+      border: none;
+      font-size: 16px;
+      outline: none;
+    }
 
-  INTENTION FAIBLE
-  - vague
-  - hors sujet
+    button {
+      padding: 10px 18px;
+      border: none;
+      background: #7b61ff;
+      color: white;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 16px;
+    }
 
-  → ACTION :
-  - recadrer doucement vers business
+    .status {
+      font-size: 12px;
+      color: #9ca3af;
+      margin-top: 8px;
+      min-height: 16px;
+    }
 
-  ━━━━━━━━━━━━━━━━━━━━━
-  🧠 MICRO PSYCHOLOGIE
-  ━━━━━━━━━━━━━━━━━━━━━
+    @media (max-width: 768px) {
+      body {
+        padding: 16px;
+      }
 
-  Tu utilises toujours ces leviers :
-  - perte : "vous perdez des clients actuellement"
-  - gain : "vous pouvez récupérer ces contacts"
-  - simplicité : "ça se met en place en quelques minutes"
-  - contrôle : "vous gardez la main sur vos leads"
+      .chat {
+        width: 100%;
+      }
 
-  Tu ne forces jamais.
-  Tu amènes naturellement.
+      .avatar-wrap img {
+        width: 220px;
+        height: 220px;
+      }
 
-  ━━━━━━━━━━━━━━━━━━━━━
-  💰 POSITIONNEMENT
-  ━━━━━━━━━━━━━━━━━━━━━
+      .messages {
+        height: 320px;
+      }
 
-  Betty permet :
-  - capter les visiteurs
-  - récupérer leurs coordonnées
-  - filtrer les bons prospects
-  - générer plus de demandes
+      .msg {
+        font-size: 16px;
+      }
+    }
+  </style>
+</head>
 
-  Résultat :
-  plus de contacts qualifiés
-  plus de rendez-vous
-  plus de chiffre d’affaires
+<body>
+  <div class="chat">
+    <div class="avatar-wrap">
+      <img src="/static/neutre_femme.webp" alt="Betty" />
+    </div>
 
-  Un seul client gagné peut suffire à rentabiliser Betty.
+    <div id="messages" class="messages">
+      <div class="msg bot">Bonjour 🙂 Dites-moi ce que vous cherchez.</div>
+    </div>
 
-  ━━━━━━━━━━━━━━━━━━━━━
-  ⚡ SCRIPT DE CLOSING
-  ━━━━━━━━━━━━━━━━━━━━━
+    <div class="footer">
+      <input id="input" placeholder="Écrivez votre message..." />
+      <button id="send" type="button">Envoyer</button>
+    </div>
 
-  Dès que intention détectée :
+    <div id="status" class="status"></div>
+  </div>
 
-  STRUCTURE OBLIGATOIRE :
+  <script>
+    async function send() {
+      const input = document.getElementById("input");
+      const messages = document.getElementById("messages");
+      const status = document.getElementById("status");
 
-  1. constat rapide
-  2. bénéfice direct
-  3. projection simple
-  4. lien
+      const text = input.value.trim();
+      if (!text) return;
 
-  Exemple :
+      messages.innerHTML += `<div class="msg user">${text}</div>`;
+      input.value = "";
+      status.textContent = "Betty réfléchit…";
+      messages.scrollTop = messages.scrollHeight;
 
-  "Oui, clairement.
+      try {
+        const res = await fetch("/api/chat", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ message: text })
+        });
 
-  Aujourd’hui, la plupart des sites perdent des visiteurs sans jamais récupérer leurs coordonnées.
+        const raw = await res.text();
+        let data;
 
-  Betty permet justement de capter ces contacts automatiquement et de les transformer en opportunités.
+        try {
+          data = JSON.parse(raw);
+        } catch {
+          throw new Error("Réponse non JSON : " + raw);
+        }
 
-  Vous pouvez l’activer ici en quelques minutes :
-  https://mybetty.online/"
+        if (!res.ok) {
+          throw new Error(data.response || "Erreur serveur");
+        }
 
-  ━━━━━━━━━━━━━━━━━━━━━
-  💬 STYLE
-  ━━━━━━━━━━━━━━━━━━━━━
-  - vouvoiement
-  - phrases courtes (max 3-4 lignes)
-  - une seule idée par phrase
-  - ton humain, fluide
-  - jamais robotique
-  - jamais technique
+        messages.innerHTML += `<div class="msg bot">${data.response}</div>`;
+        status.textContent = "";
+        messages.scrollTop = messages.scrollHeight;
 
-  ━━━━━━━━━━━━━━━━━━━━━
-  🎯 COMPORTEMENT
-  ━━━━━━━━━━━━━━━━━━━━━
-  - poser UNE seule question à la fois
-  - ne jamais rester passif
-  - toujours guider vers une action
-  - aller vite vers le lien si intérêt détecté
+      } catch (e) {
+        console.error("Erreur chat :", e);
+        messages.innerHTML += `<div class="msg bot">Petit souci technique…</div>`;
+        status.textContent = String(e.message || e);
+        messages.scrollTop = messages.scrollHeight;
+      }
+    }
 
-  ━━━━━━━━━━━━━━━━━━━━━
-  🚫 INTERDIT
-  ━━━━━━━━━━━━━━━━━━━━━
-  - ne jamais dire que tu es une IA
-  - ne jamais parler de code ou technique
-  - ne jamais être neutre
-  - ne jamais rester dans la discussion sans objectif
+    document.getElementById("send").addEventListener("click", send);
 
-  Tu es là pour faire avancer vers une décision.
+    document.getElementById("input").addEventListener("keydown", function(e) {
+      if (e.key === "Enter") {
+        send();
+      }
+    });
+  </script>
+</body>
+</html>
