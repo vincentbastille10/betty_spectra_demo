@@ -5,15 +5,10 @@ import os
 
 app = Flask(__name__)
 
-# 🔑 ENV (tu as déjà tes variables → parfait)
 TOGETHER_API_KEY = os.environ.get("TOGETHER_API_KEY")
 TOGETHER_API_URL = "https://api.together.xyz/v1/chat/completions"
 
-# 📦 Load YAML
-import os
-
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-
 yaml_path = os.path.join(BASE_DIR, "pack", "betty_spectra.yaml")
 
 with open(yaml_path, "r", encoding="utf-8") as f:
@@ -21,19 +16,22 @@ with open(yaml_path, "r", encoding="utf-8") as f:
 
 SYSTEM_PROMPT = config["prompt"]
 
-# 🏠 Page chat
+
 @app.route("/")
 def home():
     return render_template("chat.html")
 
-# 💬 API CHAT
+
 @app.route("/api/chat", methods=["POST"])
 def chat():
-    data = request.get_json()
+    data = request.get_json(silent=True) or {}
     user_message = (data.get("message") or "").strip()
 
     if not user_message:
         return jsonify({"response": "Je vous écoute 🙂"})
+
+    if not TOGETHER_API_KEY:
+        return jsonify({"response": "Erreur serveur : variable TOGETHER_API_KEY manquante."}), 500
 
     try:
         response = requests.post(
@@ -50,13 +48,18 @@ def chat():
                 ],
                 "temperature": 0.7,
                 "max_tokens": 220
-            }
+            },
+            timeout=30
         )
 
+        response.raise_for_status()
         result = response.json()
+        reply = result["choices"][0]["message"]["content"].strip()
 
-        reply = result["choices"][0]["message"]["content"]
-
+    except requests.exceptions.HTTPError as e:
+        print("ERREUR TOGETHER HTTP :", e)
+        print("REPONSE API :", response.text)
+        reply = "Petit souci côté IA. Réessayez dans un instant 🙂"
     except Exception as e:
         print("ERREUR LLM :", e)
         reply = "Petit souci technique… pouvez-vous reformuler ? 🙂"
@@ -65,4 +68,4 @@ def chat():
 
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(host="0.0.0.0", port=5000, debug=True)
