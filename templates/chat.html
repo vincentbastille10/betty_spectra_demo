@@ -55,15 +55,8 @@
       white-space: pre-wrap;
     }
 
-    .user {
-      text-align: right;
-      color: #ffffff;
-    }
-
-    .bot {
-      text-align: left;
-      color: #a78bfa;
-    }
+    .user { text-align: right; color: #ffffff; }
+    .bot  { text-align: left;  color: #a78bfa; }
 
     .footer {
       display: flex;
@@ -97,26 +90,11 @@
     }
 
     @media (max-width: 768px) {
-      body {
-        padding: 16px;
-      }
-
-      .chat {
-        width: 100%;
-      }
-
-      .avatar-wrap img {
-        width: 220px;
-        height: 220px;
-      }
-
-      .messages {
-        height: 320px;
-      }
-
-      .msg {
-        font-size: 16px;
-      }
+      body { padding: 16px; }
+      .chat { width: 100%; }
+      .avatar-wrap img { width: 220px; height: 220px; }
+      .messages { height: 320px; }
+      .msg { font-size: 16px; }
     }
   </style>
 </head>
@@ -132,7 +110,7 @@
     </div>
 
     <div class="footer">
-      <input id="input" placeholder="Écrivez votre message..." />
+      <input id="input" placeholder="Écrivez votre message…" />
       <button id="send" type="button">Envoyer</button>
     </div>
 
@@ -141,9 +119,9 @@
 
   <script>
     async function send() {
-      const input = document.getElementById("input");
+      const input    = document.getElementById("input");
       const messages = document.getElementById("messages");
-      const status = document.getElementById("status");
+      const status   = document.getElementById("status");
 
       const text = input.value.trim();
       if (!text) return;
@@ -162,35 +140,26 @@
 
         const raw = await res.text();
         let data;
+        try { data = JSON.parse(raw); }
+        catch { throw new Error("Réponse non JSON : " + raw); }
 
-        try {
-          data = JSON.parse(raw);
-        } catch {
-          throw new Error("Réponse non JSON : " + raw);
-        }
-
-        if (!res.ok) {
-          throw new Error(data.response || "Erreur serveur");
-        }
+        if (!res.ok) throw new Error(data.response || "Erreur serveur");
 
         messages.innerHTML += `<div class="msg bot">${data.response}</div>`;
         status.textContent = "";
-        messages.scrollTop = messages.scrollHeight;
 
       } catch (e) {
         console.error("Erreur chat :", e);
         messages.innerHTML += `<div class="msg bot">Petit souci technique…</div>`;
         status.textContent = String(e.message || e);
-        messages.scrollTop = messages.scrollHeight;
       }
+
+      messages.scrollTop = messages.scrollHeight;
     }
 
     document.getElementById("send").addEventListener("click", send);
-
-    document.getElementById("input").addEventListener("keydown", function(e) {
-      if (e.key === "Enter") {
-        send();
-      }
+    document.getElementById("input").addEventListener("keydown", e => {
+      if (e.key === "Enter") send();
     });
   </script>
 </body>
