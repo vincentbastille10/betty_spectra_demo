@@ -22,7 +22,7 @@ def home():
     return render_template("chat.html")
 
 
-@app.route("/api/chat", methods=["POST"])
+@app.route("/chat", methods=["POST"])
 def chat():
     data = request.get_json(silent=True) or {}
     user_message = (data.get("message") or "").strip()
