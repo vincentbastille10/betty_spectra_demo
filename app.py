@@ -10,7 +10,13 @@ TOGETHER_API_KEY = os.environ.get("TOGETHER_API_KEY")
 TOGETHER_API_URL = "https://api.together.xyz/v1/chat/completions"
 
 # 📦 Load YAML
-with open("pack/betty_spectra.yaml", "r", encoding="utf-8") as f:
+import os
+
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+
+yaml_path = os.path.join(BASE_DIR, "pack", "betty_spectra.yaml")
+
+with open(yaml_path, "r", encoding="utf-8") as f:
     config = yaml.safe_load(f)
 
 SYSTEM_PROMPT = config["prompt"]
